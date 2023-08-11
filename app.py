@@ -1,17 +1,15 @@
 from flask import Flask, render_template, request
 import cv2
-from tensorflow import keras
+import keras
 from keras.models import load_model
 from keras import preprocessing
 from PIL import Image, ImageOps
 import numpy as np
-import tensorflowjs as tfjs
 import os 
-
+import pickle
 img_shape=(50,50)
 model=keras.models.load_model('model.tf', compile=False)
 model.compile(loss='binary_crossentropy',metrics=['accuracy'], optimizer='adam')
-
 print("model is loaded")
 app = Flask(__name__)
 @app.route("/", methods=["GET","POST"])

@@ -8,8 +8,11 @@ import numpy as np
 import os 
 import pickle
 img_shape=(50,50)
-model=keras.models.load_model('model.tf', compile=False)
-model.compile(loss='binary_crossentropy',metrics=['accuracy'], optimizer='adam')
+# model = tf.keras.models.load_model(model_dir, options=localhost_save_option)
+model=keras.models.load_model('modelnew.h5')
+# model.compile(loss='binary_crossentropy',metrics=['accuracy'], optimizer='adam')
+# model=pickle.load(open('model.pkl','rb'))
+
 print("model is loaded")
 app = Flask(__name__)
 @app.route("/", methods=["GET","POST"])
@@ -25,7 +28,8 @@ def predict():
         file.save(file_path)
         image=Image.open(file)
         image=image.resize(img_shape)
-        image = keras.utils.img_to_array(image)
+        # image = keras.utils.img_to_array(image)
+        image = np.asarray(image)
         image=np.expand_dims(image,axis=0)
         predictions = model.predict(image)
         score = float(predictions[0])

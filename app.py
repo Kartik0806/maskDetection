@@ -13,6 +13,7 @@ def main():
     file_uploaded=st.file_uploader('Choose the file', type=['jpg','jpeg','jpg','png'])
     if file_uploaded is not None:
         image=Image.open(file_uploaded)
+        image = image.convert('RGB')
         figure=plt.figure()
         plt.imshow(image)
         plt.axis('off')

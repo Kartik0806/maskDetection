@@ -1,43 +1,40 @@
-from flask import Flask, render_template, request
+import streamlit as st
 import cv2
 import keras
 from keras.models import load_model
 from keras import preprocessing
 from PIL import Image, ImageOps
 import numpy as np
-import os 
-import pickle
-img_shape=(50,50)
-# model = tf.keras.models.load_model(model_dir, options=localhost_save_option)
-model=keras.models.load_model('customModel.h5',compile=False)
-model.compile(loss='binary_crossentropy',metrics=['accuracy'], optimizer='adam')
-# model=pickle.load(open('model.pkl','rb'))
+import matplotlib.pyplot as plt
 
-print("model is loaded")
-app = Flask(__name__)
-@app.route("/", methods=["GET","POST"])
-def home():
-    return render_template('index.html')
+st.header('Mask Detector')
 
-@app.route("/predict",methods=["GET","POST"])
-def predict():
-    if request.method == "POST":
-        file = request.files['image']
-        filename = file.filename
-        file_path = os.path.join('static/user uploaded', filename)
-        file.save(file_path)
-        image=Image.open(file)
-        image=image.resize(img_shape)
-        # image = keras.utils.img_to_array(image)
-        image = np.asarray(image)
-        image=np.expand_dims(image,axis=0)
-        predictions = model.predict(image)
-        score = float(predictions[0])
-        output=''
-        if(score>0.5):
-            output = 'The person is not wearing a mask'
-        else:
-            output = 'The person is wearing a mask'
-        return render_template('sec.html',pred_output=output, user_image=file_path)
-if __name__ == "__main__":
-    app.run(threaded=False)
+def main():
+    file_uploaded=st.file_uploader('Choose the file', type=['jpg','jpeg','jpg','png'])
+    if file_uploaded is not None:
+        image=Image.open(file_uploaded)
+        figure=plt.figure()
+        plt.imshow(image)
+        plt.axis('off')
+        result=predict_class(image)
+        st.write(result)
+        st.pyplot(figure)
+def predict_class(image):
+    model=keras.models.load_model('customModel.h5',compile=False)
+    # model=keras.models.load_model('modelnew.h5',compile=False)
+    model.compile(loss='binary_crossentropy',metrics=['accuracy'], optimizer='adam')
+    img_shape=(50,50)
+    image=image.resize(img_shape)
+    image = np.asarray(image)
+    image=np.expand_dims(image,axis=0)
+    predictions = model.predict(image)
+    score = float(predictions[0])
+    output=''
+    if(score>0.5):
+        output = 'The person is not wearing a mask'
+    else:
+        output = 'The person is wearing a mask'
+    return output
+
+if __name__=="__main__":
+    main()

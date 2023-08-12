@@ -9,8 +9,8 @@ import os
 import pickle
 img_shape=(50,50)
 # model = tf.keras.models.load_model(model_dir, options=localhost_save_option)
-model=keras.models.load_model('modelnew.h5')
-# model.compile(loss='binary_crossentropy',metrics=['accuracy'], optimizer='adam')
+model=keras.models.load_model('customModel.h5',compile=False)
+model.compile(loss='binary_crossentropy',metrics=['accuracy'], optimizer='adam')
 # model=pickle.load(open('model.pkl','rb'))
 
 print("model is loaded")
